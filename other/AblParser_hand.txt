@@ -1,0 +1,663 @@
+BehaviorUnit ::= ( "package" Name ";" )? ( ( ImportDeclaration ) | ( ConstantDeclaration ) )* <BEHAVING_ENTITY> AblName <LBRACE> ( TeamNeededForSuccessDefaultDeclaration )? ( DecisionCycleSMCallDeclaration )? ( ConflictDeclaration )* ( AblDeclaration )* ( BehaviorDefinition | Rule )* ( InitialTree ) <RBRACE> <EOF>
+
+
+ConstantDeclaration ::= <CONSTANTS> Name ( "." "*" )? ";"
+
+
+ConflictDeclaration ::= <CONFLICT> AblName ( AblName )+ <SEMICOLON>
+
+
+PropertyDeclaration ::= <PROPERTY> Type AblName <SEMICOLON>
+
+
+AblDeclaration ::= ( AblVariableDeclaration <SEMICOLON> )
+
+
+ | WMERegistration
+
+
+ | ActionRegistration
+
+
+ | WMEDeclaration
+
+
+ | PropertyDeclaration
+
+WMERegistration ::= <REGISTER> <WME> WMEClass <WITH> Name <SEMICOLON>
+
+
+ActionRegistration ::= <REGISTER> ( <ACT> | AblName ) AblName <LPAREN> ( AblSimpleType ( <COMMA> AblSimpleType )* )? <RPAREN> <WITH> Name <SEMICOLON>
+
+
+BehaviorDefinition ::= ( BehaviorTypeModifier )* BehaviorType <BEHAVIOR> AblName <LPAREN> ( AblSimpleType AblSimpleType ( <COMMA> AblSimpleType AblSimpleType )* )? <RPAREN> <LBRACE> ( BehaviorModifiers )* ( AblVariableDeclaration <SEMICOLON> )* ( BehaviorStep )* <RBRACE>
+
+
+BehaviorModifiers ::= ( Precondition | Specificity | ContextCondition | EntryCondition | NumberNeededForSuccess | TeamMemberSpecifier | SuccessCondition | ReinforcementSignals | ReinforcementState )
+
+
+Specificity ::= <SPECIFICITY> <INTEGER_LITERAL> <SEMICOLON>
+
+
+NumberNeededForSuccess ::= <NUMBER_NEEDED_FOR_SUCCESS> <INTEGER_LITERAL> <SEMICOLON>
+
+
+TeamMemberSpecifier ::= <TEAMMEMBERS> ( <IDENTIFIER> )+ <SEMICOLON>
+
+
+InitialTree ::= <INITIAL_TREE> <LBRACE> ( BehaviorStep )* <RBRACE>
+
+
+BehaviorType ::= ( <SEQUENTIAL> | <PARALLEL> | <COLLECTION> )
+
+
+BehaviorTypeModifier ::= ( <ATOMIC> )
+
+
+ | ( <JOINT> )
+
+
+ | ( <ADAPTIVE> )
+
+
+Precondition ::= <PRECONDITION> <LBRACE> TestExpression <RBRACE>
+
+
+Rule ::= <RULE> AblName <LBRACE> TestExpression <ARROW> WMEAssertSequence <RBRACE>
+
+
+WMEAssertSequence ::= ( WMEAssertExpression | MentalActAssert )+
+
+
+MentalActAssert ::= <LPAREN> <LBRACE> ( ( AblVariableDeclaration <SEMICOLON> ) | ( Statement ) )* <RBRACE> <RPAREN>
+
+
+WMEAssertExpression ::= ( <BANG> )? ( Name <ASSIGN> )? <LPAREN> WMEClass ( WMEAssert )+ <RPAREN>
+
+
+WMEAssert ::= <IDENTIFIER> ( <ASSIGN> | <EQ> ) AblExpression
+
+
+TestExpression ::= ( <IDENTIFIER> )? ( WMETestSequence )+
+
+
+DefaultMemoryLookahead ::= <IDENTIFIER> WMETestSequence
+
+
+WMETestSequence ::= <LBRACE> <IDENTIFIER> ( WMETest | <LPAREN> ConditionalExpression <RPAREN> )+ <RBRACE>
+
+
+ | ( WMETest | <LPAREN> ConditionalExpression <RPAREN> )
+
+
+WMETest ::= ( <BANG> )? ( Name <ASSIGN> )? <LPAREN> WMEClass ( WMEFieldTest )* <RPAREN>
+
+
+WMEClass ::= AblName
+
+
+WMEFieldTest ::= <IDENTIFIER> ( <V_BIND> | <GT> | <LT> | <EQ> | <LE> | <GE> | <NE> ) AblExpression
+
+
+AblLiteral ::= ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> | <DOUBLE_LITERAL> | <CHARACTER_LITERAL> | <STRING_LITERAL> | BooleanLiteral | NullLiteral )
+
+
+AblExpression ::= ( Name | AblLiteral )
+
+
+ContextCondition ::= <CONTEXT_CONDITION> <LBRACE> TestExpression <RBRACE>
+
+
+EntryCondition ::= <ENTRY_CONDITION> <LBRACE> TestExpression <RBRACE>
+
+
+SuccessCondition ::= <SUCCESS_CONDITION> <LBRACE> TestExpression <RBRACE>
+
+
+ReinforcementSignals ::= <R_SIGNAL> <LBRACE> ( ReinforcementSignal )* <RBRACE>
+
+
+ReinforcementSignal ::= AblExpression <IF> <LBRACE> TestExpression <RBRACE>
+
+
+ReinforcementState ::= <STATE> <LBRACE> StateCondition ( ( AblVariableDeclaration <SEMICOLON> ) | ( Statement ) )* StateReturn <RBRACE>
+
+
+StateCondition ::= <LBRACE> TestExpression <RBRACE>
+
+
+StateReturn ::= <STATE> <RETURN> <LPAREN> AblExpression ( <COMMA> AblExpression )* <RPAREN> <SEMICOLON>
+
+
+BehaviorStep ::= ( <WITH> <LPAREN> StepModifier ( <COMMA> StepModifier )* <RPAREN> )? ModifiableStep
+
+
+ | FailStep
+
+
+ | SucceedStep
+
+
+ModifiableStep ::= PrimitiveActStep
+
+
+ | MentalActStep
+
+
+ | GoalStep
+
+
+ | ModifyStep
+
+
+ | AnonymousStep
+
+
+ | WaitStep
+
+
+PrimitiveActStep ::= PrimitiveAct
+
+
+MentalActStep ::= MentalAct
+
+
+GoalStep ::= Goal
+
+
+WaitStep ::= Wait
+
+
+AnonymousStep ::= AnonymousBlock
+
+
+ModifyStep ::= ( ( <MOVE_STEP> Name <INTEGER_LITERAL> Name <INTEGER_LITERAL> Name Name <SEMICOLON> ) | ( <DELETE_STEP> Name <INTEGER_LITERAL> Name Name <SEMICOLON> ) | ( <ADD_STEP> Name <INTEGER_LITERAL> Name Name BehaviorStep ) )
+
+
+FailStep ::= <FAIL> <SEMICOLON>
+
+
+SucceedStep ::= <SUCCEED> <SEMICOLON>
+
+
+AnonymousBlock ::= BehaviorType <LBRACE> ( AblVariableDeclaration <SEMICOLON> )* ( BehaviorStep )+ <RBRACE>
+
+
+StepModifier ::= SuccessTest
+
+
+ | PriorityModifier
+
+
+ | <IGNORE_FAILURE>
+
+
+ | Persistence
+
+
+ | <EFFECT_ONLY>
+
+
+ | <TEAM_EFFECT_ONLY>
+
+
+ | NamedProperty
+
+
+ | <POST>
+
+
+ | <POST_TO> <IDENTIFIER>
+
+
+ | <ONE_NEEDED_FOR_SUCCESS>
+
+
+ | <TEAM_NEEDED_FOR_SUCCESS>
+
+
+SuccessTest ::= <SUCCESS_TEST> <LBRACE> TestExpression <RBRACE>
+
+
+PriorityModifier ::= ( <PRIORITY_MODIFIER> <INTEGER_LITERAL> )
+
+
+ | ( <PRIORITY> <INTEGER_LITERAL> )
+
+
+Persistence ::= ( <PERSISTENT> PersistenceType )
+
+
+ | ( <PERSISTENT> )
+
+
+NamedProperty ::= <PROPERTY> AblName AblExpression
+
+
+PersistenceType ::= ( <WHEN_FAILS> | <WHEN_SUCCEEDS> )
+
+
+PrimitiveAct ::= <ACT> AblName <LPAREN> ( AblExpression ( <COMMA> AblExpression )* )? <RPAREN> <SEMICOLON>
+
+
+MentalAct ::= <MENTAL_ACT> <LBRACE> ( ( AblVariableDeclaration <SEMICOLON> ) | ( Statement ) )* <RBRACE>
+
+
+Goal ::= ( <JOINT> )? ( <SUBGOAL> | <SPAWNGOAL> ) AblName <LPAREN> ( AblExpression ( <COMMA> AblExpression )* )? <RPAREN> ( <AT> Name )? <SEMICOLON>
+
+
+Wait ::= <WAIT> <SEMICOLON>
+
+
+AblVariableDeclaration ::= Type VariableDeclarator ( "," VariableDeclarator )*
+
+
+AblSimpleType ::= ( PrimitiveType | <IDENTIFIER> )
+
+
+AblName ::= <IDENTIFIER>
+
+
+WMEDeclaration ::= <WME> AblName ( <EXTENDS> AblName )? <LBRACE> ( AblVariableDeclaration <SEMICOLON> )* <RBRACE>
+
+
+TeamNeededForSuccessDefaultDeclaration ::= <JOINT_GOAL_SUCCESS_NEGOTIATION> ( <TEAM_NEEDED_FOR_SUCCESS> | <ONE_NEEDED_FOR_SUCCESS> ) <SEMICOLON>
+
+
+DecisionCycleSMCallDeclaration ::= <DECISION_CYCLE_SM_CALL> Name <SEMICOLON>
+
+ImportDeclaration ::= "import" Name ( "." "*" )? ";"
+
+
+UnmodifiedClassDeclaration ::= "class" <IDENTIFIER> ( "extends" Name )? ( "implements" NameList )? ClassBody
+
+
+ClassBody ::= "{" ( ClassBodyDeclaration )* "}"
+
+
+NestedClassDeclaration ::= ( "static" | "abstract" | "final" | "public" | "protected" | "private" )* UnmodifiedClassDeclaration
+
+
+ClassBodyDeclaration ::= Initializer
+
+
+ | NestedClassDeclaration
+
+
+ | NestedInterfaceDeclaration
+
+
+ | ConstructorDeclaration
+
+
+ | MethodDeclaration
+
+
+ | FieldDeclaration
+
+
+MethodDeclarationLookahead ::= ( "public" | "protected" | "private" | "static" | "abstract" | "final" | "native" | "synchronized" )* ResultType <IDENTIFIER> "("
+
+
+NestedInterfaceDeclaration ::= ( "static" | "abstract" | "final" | "public" | "protected" | "private" )* UnmodifiedInterfaceDeclaration
+
+
+UnmodifiedInterfaceDeclaration ::= "interface" <IDENTIFIER> ( "extends" NameList )? "{" ( InterfaceMemberDeclaration )* "}"
+
+
+InterfaceMemberDeclaration ::= NestedClassDeclaration
+
+
+ | NestedInterfaceDeclaration
+
+
+ | MethodDeclaration
+
+
+ | FieldDeclaration
+
+
+FieldDeclaration ::= ( "public" | "protected" | "private" | "static" | "final" | "transient" | "volatile" )* Type VariableDeclarator ( "," VariableDeclarator )* ";"
+
+
+VariableDeclarator ::= VariableDeclaratorId ( "=" VariableInitializer )?
+
+
+VariableDeclaratorId ::= <IDENTIFIER> ( "[" "]" )*
+
+
+VariableInitializer ::= ( ArrayInitializer | Expression )
+
+
+ArrayInitializer ::= "{" ( VariableInitializer ( "," VariableInitializer )* )? ( "," )? "}"
+
+
+MethodDeclaration ::= ( "public" | "protected" | "private" | "static" | "abstract" | "final" | "native" | "synchronized" )* ResultType MethodDeclarator ( "throws" NameList )? ( Block | ";" )
+
+
+MethodDeclarator ::= <IDENTIFIER> FormalParameters ( "[" "]" )*
+
+
+FormalParameters ::= "(" ( FormalParameter ( "," FormalParameter )* )? ")"
+
+
+FormalParameter ::= ( "final" )? Type VariableDeclaratorId
+
+
+ConstructorDeclaration ::= ( "public" | "protected" | "private" )? <IDENTIFIER> FormalParameters ( "throws" NameList )? "{" ( ExplicitConstructorInvocation )? ( BlockStatement )* "}"
+
+
+ExplicitConstructorInvocation ::= "this" Arguments ";"
+
+
+ | ( PrimaryExpression "." )? "super" Arguments ";"
+
+
+Initializer ::= ( "static" )? Block
+ 
+
+Type ::= ( PrimitiveType | Name ) ( "[" "]" )*
+
+
+PrimitiveType ::= ( "boolean" | "char" | "byte" | "short" | "int" | "long" | "float" | "double" )
+
+
+ResultType ::= "void"
+
+
+ | Type
+
+
+Name ::= <IDENTIFIER> ( "." <IDENTIFIER> )*
+
+
+NameList ::= Name ( "," Name )*
+
+ 
+Expression ::= ConditionalExpression ( AssignmentOperator Expression )?
+
+
+AssignmentOperator ::= "="
+
+
+ | "*="
+
+
+ | "/="
+
+
+ | "%="
+
+
+ | "+="
+
+
+ | "-="
+
+
+ | "<<="
+
+
+ | ">>="
+
+
+ | ">>>="
+
+
+ | "&amp;="
+
+
+ | "^="
+
+
+ | "|="
+
+
+ConditionalExpression ::= ConditionalOrExpression ( "?" Expression ":" ConditionalExpression )?
+
+
+ConditionalOrExpression ::= ConditionalAndExpression ( "||" ConditionalAndExpression )*
+
+
+ConditionalAndExpression ::= InclusiveOrExpression ( "&amp;&amp;" InclusiveOrExpression )*
+
+
+InclusiveOrExpression ::= ExclusiveOrExpression ( "|" ExclusiveOrExpression )*
+
+
+ExclusiveOrExpression ::= AndExpression ( "^" AndExpression )*
+
+
+AndExpression ::= EqualityExpression ( "&amp;" EqualityExpression )*
+
+
+EqualityExpression ::= InstanceOfExpression ( ( "==" | "!=" ) InstanceOfExpression )*
+
+
+InstanceOfExpression ::= RelationalExpression ( "instanceof" Type )?
+
+
+RelationalExpression ::= ShiftExpression ( ( "<" | ">" | "<=" | ">=" ) ShiftExpression )*
+
+
+ShiftExpression ::= AdditiveExpression ( ( "<<" | ">>" | ">>>" ) AdditiveExpression )*
+
+
+AdditiveExpression ::= MultiplicativeExpression ( ( "+" | "-" ) MultiplicativeExpression )*
+
+
+MultiplicativeExpression ::= UnaryExpression ( ( "*" | "/" | "%" ) UnaryExpression )*
+
+
+UnaryExpression ::= ( "+" | "-" ) UnaryExpression
+
+
+ | PreIncrementExpression
+
+
+ | PreDecrementExpression
+
+
+ | UnaryExpressionNotPlusMinus
+
+
+PreIncrementExpression ::= "++" PrimaryExpression
+
+
+PreDecrementExpression ::= "--" PrimaryExpression
+
+
+UnaryExpressionNotPlusMinus ::= ( "~" | "!" ) UnaryExpression
+
+
+ | CastExpression
+
+
+ | PostfixExpression
+
+
+PostfixExpression ::= PrimaryExpression ( "++" | "--" )?
+
+
+CastExpression ::= "(" Type ")" UnaryExpression
+
+
+ | "(" Type ")" UnaryExpressionNotPlusMinus
+
+
+PrimaryExpression ::= PrimaryPrefix ( PrimarySuffix )*
+
+
+PrimaryPrefix ::= Literal
+
+
+ | "this"
+
+
+ | "super" "." <IDENTIFIER>
+
+
+ | "(" Expression ")"
+
+
+ | AllocationExpression
+
+
+ | ResultType "." "class"
+
+
+ | Name
+
+
+PrimarySuffix ::= "." "this"
+
+
+ | "." AllocationExpression
+
+
+ | "[" Expression "]"
+
+
+ | "." <IDENTIFIER>
+
+
+ | Arguments
+
+
+Literal ::= <INTEGER_LITERAL>
+
+
+ | <FLOATING_POINT_LITERAL>
+
+
+ | <CHARACTER_LITERAL>
+
+
+ | <DOUBLE_LITERAL>
+
+
+ | <STRING_LITERAL>
+
+
+ | BooleanLiteral
+
+
+ | NullLiteral
+
+
+BooleanLiteral ::= ( "true" | "false" )
+
+
+NullLiteral ::= "null"
+
+
+Arguments ::= "(" ( ArgumentList )? ")"
+
+
+ArgumentList ::= Expression ( "," Expression )*
+
+
+AllocationExpression ::= "new" PrimitiveType ArrayDimsAndInits
+
+
+ | "new" Name ( ArrayDimsAndInits | Arguments ( ClassBody )? )
+
+
+ArrayDimsAndInits ::= ( "[" Expression "]" )+ ( "[" "]" )*
+
+
+ | ( "[" "]" )+ ArrayInitializer
+
+
+Statement ::= ( LabeledStatement | Block | EmptyStatement | StatementExpression ";" | SwitchStatement | IfStatement | WhileStatement | DoStatement | ForStatement | BreakStatement | ContinueStatement | ReturnStatement | ThrowStatement | SynchronizedStatement | TryStatement | AssertStatement )
+
+
+LabeledStatement ::= <IDENTIFIER> ":" Statement
+
+
+Block ::= "{" ( Statement )* "}"
+
+
+BlockStatement ::= LocalVariableDeclaration ";"
+
+
+ | Statement
+
+
+ | UnmodifiedClassDeclaration
+
+
+ | UnmodifiedInterfaceDeclaration
+
+
+LocalVariableDeclaration ::= ( "final" )? Type VariableDeclarator ( "," VariableDeclarator )*
+
+
+EmptyStatement ::= ";"
+
+
+StatementExpression ::= PreIncrementExpression
+
+
+ | PreDecrementExpression
+
+
+ | PrimaryExpression ( "++" | "--" | AssignmentOperator Expression )?
+
+
+SwitchStatement ::= "switch" "(" Expression ")" "{" ( SwitchLabel ( BlockStatement )* )* "}"
+
+
+SwitchLabel ::= "case" Expression ":"
+
+
+ | "default" ":"
+
+
+IfStatement ::= "if" "(" Expression ")" Statement ( "else" Statement )?
+
+
+WhileStatement ::= "while" "(" Expression ")" Statement
+
+
+DoStatement ::= "do" Statement "while" "(" Expression ")" ";"
+
+
+ForStatement ::= "for" "(" ( ForInit )? ";" ( Expression )? ";" ( ForUpdate )? ")" Statement
+
+
+ForInit ::= LocalVariableDeclaration
+
+
+ | StatementExpressionList
+
+
+StatementExpressionList ::= StatementExpression ( "," StatementExpression )*
+
+
+ForUpdate ::= StatementExpressionList
+
+
+BreakStatement ::= "break" ( <IDENTIFIER> )? ";"
+
+
+ContinueStatement ::= "continue" ( <IDENTIFIER> )? ";"
+
+
+ReturnStatement ::= "return" ( Expression )? ";"
+
+
+ThrowStatement ::= "throw" Expression ";"
+
+
+SynchronizedStatement ::= "synchronized" "(" Expression ")" Block
+
+
+TryStatement ::= "try" Block ( "catch" "(" FormalParameter ")" Block )* ( "finally" Block )?
+
+
+AssertStatement ::= "assert" Expression ( ":" Expression )? ";"
+
+
+
+

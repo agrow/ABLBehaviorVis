@@ -1,0 +1,203 @@
+<DEFAULT> SKIP : {
+" "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+<DEFAULT> MORE : {
+"//" : IN_SINGLE_LINE_COMMENT
+| <"/**" ~["/"]> : IN_FORMAL_COMMENT
+| "/*" : IN_MULTI_LINE_COMMENT
+}
+<IN_SINGLE_LINE_COMMENT> SPECIAL : {
+<SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n"> : DEFAULT
+}
+<IN_FORMAL_COMMENT> SPECIAL : {
+<FORMAL_COMMENT: "*/"> : DEFAULT
+}
+<IN_MULTI_LINE_COMMENT> SPECIAL : {
+<MULTI_LINE_COMMENT: "*/"> : DEFAULT
+}
+<IN_SINGLE_LINE_COMMENT,IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT> MORE : {
+<~[]>
+}
+<DEFAULT> TOKEN : {
+<ABSTRACT: "abstract">
+| <ASSERT: "assert">
+| <BOOLEAN: "boolean">
+| <BREAK: "break">
+| <BYTE: "byte">
+| <CASE: "case">
+| <CATCH: "catch">
+| <CHAR: "char">
+| <CLASS: "class">
+| <CONST: "const">
+| <CONTINUE: "continue">
+| <_DEFAULT: "default">
+| <DO: "do">
+| <DOUBLE: "double">
+| <ELSE: "else">
+| <EXTENDS: "extends">
+| <FALSE: "false">
+| <FINAL: "final">
+| <FINALLY: "finally">
+| <FLOAT: "float">
+| <FOR: "for">
+| <GOTO: "goto">
+| <IF: "if">
+| <IMPLEMENTS: "implements">
+| <IMPORT: "import">
+| <INSTANCEOF: "instanceof">
+| <INT: "int">
+| <INTERFACE: "interface">
+| <LONG: "long">
+| <NATIVE: "native">
+| <NEW: "new">
+| <NULL: "null">
+| <PACKAGE: "package">
+| <PRIVATE: "private">
+| <PROTECTED: "protected">
+| <PUBLIC: "public">
+| <RETURN: "return">
+| <SHORT: "short">
+| <STATIC: "static">
+| <SUPER: "super">
+| <SWITCH: "switch">
+| <SYNCHRONIZED: "synchronized">
+| <THIS: "this">
+| <THROW: "throw">
+| <THROWS: "throws">
+| <TRANSIENT: "transient">
+| <TRUE: "true">
+| <TRY: "try">
+| <VOID: "void">
+| <VOLATILE: "volatile">
+| <WHILE: "while">
+}
+<DEFAULT> TOKEN : {
+<ACT: "act">
+| <ARROW: "->">
+| <AT: "at">
+| <ATOMIC: "atomic">
+| <BEHAVING_ENTITY: "behaving_entity">
+| <BEHAVIOR: "behavior">
+| <BIND_TO: "bind_to">
+| <MENTAL_ACT: "mental_act">
+| <COLLECTION: "collection">
+| <CONFLICT: "conflict">
+| <CONSTANTS: "constants">
+| <CONTEXT_CONDITION: "context_condition">
+| <DECISION_CYCLE_SM_CALL: "decision_cycle_sm_call">
+| <EFFECT_ONLY: "effect_only">
+| <ENTRY_CONDITION: "entry_condition">
+| <FAIL: "fail_step">
+| <IGNORE_FAILURE: "ignore_failure">
+| <IMPORTANCE: "importance">
+| <INITIAL_TREE: "initial_tree">
+| <JOINT: "joint">
+| <JOINT_GOAL_SUCCESS_NEGOTIATION: "joint_goal_success_negotiation">
+| <MATCH_AND: "and">
+| <MATCH_NOT: "not">
+| <MATCH_OR: "or">
+| <NUMBER_NEEDED_FOR_SUCCESS: "number_needed_for_success">
+| <ONE_NEEDED_FOR_SUCCESS: "one_needed_for_success">
+| <PARALLEL: "parallel">
+| <PERSISTENT: "persistent">
+| <POST: "post">
+| <POST_TO: "post_to">
+| <PRECONDITION: "precondition">
+| <PRIORITY: "priority">
+| <PRIORITY_MODIFIER: "priority_modifier">
+| <PROPERTY: "property">
+| <REGISTER: "register">
+| <RULE: "rule">
+| <SEQUENTIAL: "sequential">
+| <SPAWNGOAL: "spawngoal">
+| <SPECIFICITY: "specificity">
+| <SUBGOAL: "subgoal">
+| <SUCCEED: "succeed_step">
+| <SUCCESS_TEST: "success_test">
+| <TEAM_EFFECT_ONLY: "team_effect_only">
+| <TEAMMEMBERS: "teammembers">
+| <TEAM_NEEDED_FOR_SUCCESS: "team_needed_for_success">
+| <WAIT: "wait">
+| <WHEN_FAILS: "when_fails">
+| <WHEN_SUCCEEDS: "when_succeeds">
+| <WITH: "with">
+| <WME: "wme">
+| <V_BIND: "::">
+| <MOVE_STEP: "move_step">
+| <DELETE_STEP: "delete_step">
+| <ADD_STEP: "add_step">
+| <ADAPTIVE: "adaptive">
+| <R_SIGNAL: "r_signal">
+| <STATE: "state">
+| <SUCCESS_CONDITION: "success_condition">
+}
+<DEFAULT> TOKEN : {
+<INTEGER_LITERAL: <DECIMAL_LITERAL> (["l","L"])? | <HEX_LITERAL> (["l","L"])? | <OCTAL_LITERAL> (["l","L"])?>
+| <#DECIMAL_LITERAL: (["+","-"])? ["1"-"9"] (["0"-"9"])*>
+| <#HEX_LITERAL: (["+","-"])? "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+>
+| <#OCTAL_LITERAL: (["+","-"])? "0" (["0"-"7"])*>
+| <FLOATING_POINT_LITERAL: (["+","-"])? ((["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F"])? | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F"])? | (["0"-"9"])+ <EXPONENT> (["f","F"])? | (["0"-"9"])+ (<EXPONENT>)? ["f","F"])>
+| <DOUBLE_LITERAL: (["+","-"])? ((["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["d","D"])? | "." (["0"-"9"])+ (<EXPONENT>)? (["d","D"])? | (["0"-"9"])+ <EXPONENT> (["d","D"])? | (["0"-"9"])+ (<EXPONENT>)? ["d","D"])>
+| <#EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+>
+| <CHARACTER_LITERAL: "\'" (~["\'","\\","\n","\r"] | "\\" (["n","t","b","r","f","\\","\'","\""] | ["0"-"7"] (["0"-"7"])? | ["0"-"3"] ["0"-"7"] ["0"-"7"])) "\'">
+| <STRING_LITERAL: "\"" (~["\"","\\","\n","\r"] | "\\" (["n","t","b","r","f","\\","\'","\""] | ["0"-"7"] (["0"-"7"])? | ["0"-"3"] ["0"-"7"] ["0"-"7"]))* "\"">
+}
+<DEFAULT> TOKEN : {
+<IDENTIFIER: <LETTER> (<LETTER> | <DIGIT>)*>
+| <#LETTER: ["$","A"-"Z","_","a"-"z","\u00c0"-"\u00d6","\u00d8"-"\u00f6","\u00f8"-"\u00ff","\u0100"-"\u1fff","\u3040"-"\u318f","\u3300"-"\u337f","\u3400"-"\u3d2d","\u4e00"-"\u9fff","\uf900"-"\ufaff"]>
+| <#DIGIT: ["0"-"9","\u0660"-"\u0669","\u06f0"-"\u06f9","\u0966"-"\u096f","\u09e6"-"\u09ef","\u0a66"-"\u0a6f","\u0ae6"-"\u0aef","\u0b66"-"\u0b6f","\u0be7"-"\u0bef","\u0c66"-"\u0c6f","\u0ce6"-"\u0cef","\u0d66"-"\u0d6f","\u0e50"-"\u0e59","\u0ed0"-"\u0ed9","\u1040"-"\u1049"]>
+}
+<DEFAULT> TOKEN : {
+<LPAREN: "(">
+| <RPAREN: ")">
+| <LBRACE: "{">
+| <RBRACE: "}">
+| <LBRACKET: "[">
+| <RBRACKET: "]">
+| <SEMICOLON: ";">
+| <COMMA: ",">
+| <DOT: ".">
+}
+<DEFAULT> TOKEN : {
+<ASSIGN: "=">
+| <GT: ">">
+| <LT: "<">
+| <BANG: "!">
+| <TILDE: "~">
+| <HOOK: "?">
+| <COLON: ":">
+| <EQ: "==">
+| <LE: "<=">
+| <GE: ">=">
+| <NE: "!=">
+| <SC_OR: "||">
+| <SC_AND: "&amp;&amp;">
+| <INCR: "++">
+| <DECR: "--">
+| <PLUS: "+">
+| <MINUS: "-">
+| <STAR: "*">
+| <SLASH: "/">
+| <BIT_AND: "&amp;">
+| <BIT_OR: "|">
+| <XOR: "^">
+| <REM: "%">
+| <LSHIFT: "<<">
+| <RSIGNEDSHIFT: ">>">
+| <RUNSIGNEDSHIFT: ">>>">
+| <PLUSASSIGN: "+=">
+| <MINUSASSIGN: "-=">
+| <STARASSIGN: "*=">
+| <SLASHASSIGN: "/=">
+| <ANDASSIGN: "&amp;=">
+| <ORASSIGN: "|=">
+| <XORASSIGN: "^=">
+| <REMASSIGN: "%=">
+| <LSHIFTASSIGN: "<<=">
+| <RSIGNEDSHIFTASSIGN: ">>=">
+| <RUNSIGNEDSHIFTASSIGN: ">>>=">
+}
